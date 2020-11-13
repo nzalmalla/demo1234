@@ -16,8 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-public class WelcomeBoard
-{
+public class WelcomeBoard {
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
@@ -26,22 +25,22 @@ public class WelcomeBoard
     private JwtUtil jwtTokenUtil;
 
     @RequestMapping({"/hello"})
-    public String hello(){
+    public String hello() {
         return "Hello angel";
     }
-    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-    public ResponseEntity<?>createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception{
- try{
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
 
+    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
+
+        } catch (BadCredentialsException e) {
+            throw new Exception("Wrong Username or Password", e);
+        }
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+        final String jwt = jwtTokenUtil.generateToken(userDetails);
+        return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
- catch (BadCredentialsException e){
-     throw new Exception("Wrong Username or Password",e);
- }
- final UserDetails userDetails=userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
- final String jwt= jwtTokenUtil.generateToken(userDetails);
- return ResponseEntity.ok(new AuthenticationResponse(jwt));
-}
 }
 

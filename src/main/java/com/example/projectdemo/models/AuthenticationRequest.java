@@ -1,7 +1,8 @@
 package com.example.projectdemo.models;
 
 public class AuthenticationRequest {
-    private String username, password;
+    private String username;
+    private String password;
 
     public AuthenticationRequest() {
     }
